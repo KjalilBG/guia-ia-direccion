@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IA para Dirección Estratégica Escolar</title>
+    
+    <!-- Chosen Palette: Warm Neutrals & Professional Slate (Fondo Piedra 50, Textos Pizarra 800, Acentos Azul Marino y Ámbar, Verde WhatsApp) -->
+    <!-- Application Structure Plan: Dashboard interactivo mejorado. La sección 'Ecosistema' ahora conecta bidireccionalmente el panel de texto con la gráfica (resaltando visualmente el nivel activo). Se añadieron enlaces externos directos a las herramientas de IA para facilitar el acceso. Se incluyó una sección de descarga de materiales (PDF) post-prompts. El cierre se transformó de un simple pie de página a una carta de agradecimiento con una herramienta de envío directo de WhatsApp (textarea -> API wa.me) para aumentar la conversión y conexión emocional con el ponente. -->
+    <!-- Visualization & Content Choices: 
+         1. Gráfica Ecosistema (Chart.js) -> Se añadió interactividad de estado. Al hacer clic en los botones de nivel, la gráfica actualiza el color de sus barras para resaltar en qué etapa se encuentra el usuario. (Sin SVG).
+         2. Botones de Herramientas -> Enlaces estructurados que abren en nueva pestaña, acelerando la transición de la teoría a la práctica.
+         3. Envío de WhatsApp -> Interfaz de formulario simple (HTML/JS) que codifica el texto del usuario para enviarlo directo a la app. (Sin SVG). -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f8fafc',
+                            100: '#f1f5f9',
+                            800: '#1e293b',
+                            900: '#0f172a',
+                            accent: '#2563eb',
+                            highlight: '#d97706'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        body {
+            background-color: #fafaf9;
+            color: #1e293b;
+            scroll-behavior: smooth;
+        }
+        
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 400px;
+        }
+        
+        @media (max-width: 640px) {
+            .chart-container {
+                height: 280px;
+            }
+        }
+
+        .category-btn.active {
+            background-color: #1e293b;
+            color: white;
+            border-color: #1e293b;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8; 
+        }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col">
+
+    <header class="bg-brand-900 text-white shadow-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <span class="text-2xl">🚀</span>
+                <h1 class="text-xl font-bold tracking-tight">Dirección Estratégica IA</h1>
+            </div>
+            <nav class="hidden md:flex space-x-6">
+                <a href="#ecosistema" class="hover:text-brand-highlight transition-colors font-medium">Ecosistema</a>
+                <a href="#prompts" class="hover:text-brand-highlight transition-colors font-medium">Prompts</a>
+                <a href="#materiales" class="hover:text-brand-highlight transition-colors font-medium">Materiales</a>
+                <a href="#contacto" class="hover:text-brand-highlight transition-colors font-medium">Contacto</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="flex-grow">
+        
+        <section class="bg-brand-900 text-white py-20 px-4 sm:px-6 lg:px-8">
+            <div class="max-w-4xl mx-auto text-center">
+                <h2 class="text-4xl md:text-5xl font-extrabold mb-6 leading-tight">
+                    Inteligencia Artificial para la <span class="text-brand-highlight">Dirección Escolar</span>
+                </h2>
+                <p class="text-xl md:text-2xl text-slate-300 mb-8 italic">
+                    "No se trata de usar IA… se trata de rediseñar cómo funciona tu escuela."
+                </p>
+                <p class="text-lg text-slate-400 mb-10 max-w-2xl mx-auto">
+                    Pasa de la operación diaria y el "apagar fuegos", al diseño de sistemas y la visión estratégica. Esta herramienta interactiva contiene todo lo necesario para transformar tu rol directivo desde hoy.
+                </p>
+                <a href="#prompts" class="inline-block bg-brand-accent hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-full transition-transform hover:scale-105 shadow-lg">
+                    Acceder a los Prompts
+                </a>
+            </div>
+        </section>
+
+        <section id="ecosistema" class="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+            <div class="mb-12 text-center max-w-3xl mx-auto">
+                <h3 class="text-3xl font-bold text-brand-900 mb-4">Nivel de liderazgo con IA</h3>
+                <p class="text-slate-600 text-lg">
+                    El uso de la IA no es estático; evoluciona a medida que desarrollas tu visión. En esta sección exploramos cómo cambia tu rol. Selecciona un nivel abajo para ver cómo disminuye tu carga operativa en la gráfica y descubre qué herramientas necesitas en cada etapa.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                    <h4 class="text-xl font-bold text-center mb-6">Evolución del Rol Directivo</h4>
+                    <div class="chart-container">
+                        <canvas id="ecosystemChart"></canvas>
+                    </div>
+                    <div class="flex flex-wrap justify-center gap-2 mt-6" id="level-buttons">
+                    </div>
+                </div>
+
+                <div class="bg-white p-8 rounded-2xl shadow-md border-t-4 border-brand-accent h-full transition-all" id="level-details">
+                </div>
+            </div>
+        </section>
+
+        <section id="prompts" class="py-16 px-4 sm:px-6 lg:px-8 bg-slate-100 border-t border-slate-200">
+            <div class="max-w-7xl mx-auto">
+                <div class="mb-12 text-center max-w-3xl mx-auto">
+                    <h3 class="text-3xl font-bold text-brand-900 mb-4">Biblioteca de 20 Prompts Listos para Usar</h3>
+                    <p class="text-slate-600 text-lg">
+                        Esta sección es tu motor de acción. Aquí encontrarás instrucciones precisas diseñadas para delegar, analizar y automatizar. Selecciona la categoría que necesitas resolver hoy, elige el prompt que mejor se adapte a tu situación, y haz clic en "Copiar" para pegarlo directamente en tu IA.
+                    </p>
+                </div>
+
+                <div class="flex flex-col lg:flex-row gap-8">
+                    
+                    <div class="lg:w-1/4">
+                        <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 sticky top-24">
+                            <h4 class="font-bold text-lg mb-4 pb-2 border-b border-slate-100">Áreas de Impacto</h4>
+                            <div class="flex flex-col gap-2" id="category-filters">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="lg:w-3/4">
+                        <div class="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                            <h4 class="text-2xl font-bold text-brand-900" id="current-category-title">Todas las categorías</h4>
+                            <span class="bg-brand-100 text-brand-800 py-1 px-3 rounded-full text-sm font-semibold whitespace-nowrap" id="prompt-count">0 Prompts</span>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="prompts-grid">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Nueva sección de Descarga de Materiales -->
+        <section id="materiales" class="py-16 px-4 bg-brand-50 border-t border-slate-200 text-center">
+            <div class="max-w-3xl mx-auto">
+                <h3 class="text-3xl font-bold text-brand-900 mb-4">Material de la Presentación</h3>
+                <p class="text-slate-600 text-lg mb-8">¿Quieres repasar los conceptos o compartir esta visión con tu equipo directivo? Descarga las diapositivas completas de la sesión en formato PDF.</p>
+                <a href="https://drive.google.com/file/d/1Cl3i-gtRpakNRngFQZACnDV1R1LzMZpw/view?usp=sharing" target="_blank" class="inline-flex items-center gap-2 bg-brand-900 hover:bg-brand-800 text-white font-bold py-4 px-8 rounded-xl transition-transform hover:scale-105 shadow-md">
+                    <span class="text-2xl">📊</span> Descargar Diapositivas (PDF)
+                </a>
+            </div>
+        </section>
+
+        <!-- Sección de Cita final -->
+        <section class="py-20 px-4 bg-brand-900 text-white text-center">
+            <div class="max-w-4xl mx-auto">
+                <span class="text-6xl mb-8 block">🔥</span>
+                <blockquote class="text-3xl md:text-4xl italic text-slate-200 font-light leading-snug">
+                    "La IA no transforma escuelas…<br>
+                    <span class="text-white font-bold mt-4 block">los directivos que empiezan a diseñar, sí.</span>"
+                </blockquote>
+            </div>
+        </section>
+
+        <!-- Sección de Contacto y Agradecimiento -->
+        <section id="contacto" class="py-20 px-4 bg-white border-t border-slate-200">
+            <div class="max-w-4xl mx-auto text-center mb-12">
+                <h3 class="text-3xl md:text-4xl font-bold text-brand-900 mb-6">Gracias por tu vocación</h3>
+                <p class="text-lg text-slate-600 leading-relaxed max-w-3xl mx-auto">
+                    Quiero agradecer profundamente tu tiempo, tu atención y, sobre todo, tu compromiso inquebrantable con la educación. Liderar una escuela hoy es uno de los mayores desafíos, pero también el acto de mayor impacto para nuestro futuro. No tienes que hacer esto solo; estoy aquí para acompañarte en este rediseño estratégico.
+                </p>
+            </div>
+            
+            <div class="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 bg-slate-50 p-6 md:p-10 rounded-3xl border border-slate-100 shadow-sm">
+                
+                <!-- Datos de Contacto -->
+                <div class="flex flex-col justify-center">
+                    <div class="mb-8">
+                        <span class="text-4xl block mb-4">🤝</span>
+                        <h4 class="text-2xl font-bold text-brand-900 mb-1">Mtro. Kjalil Beyruti García</h4>
+                        <p class="text-brand-accent font-semibold text-lg">Ponente y Consultor Educativo</p>
+                    </div>
+                    
+                    <div class="space-y-6">
+                        <div class="flex items-center gap-4 text-slate-700">
+                            <span class="text-2xl bg-white p-3 rounded-full shadow-sm border border-slate-100">✉️</span> 
+                            <div>
+                                <p class="text-sm font-bold text-slate-400 uppercase tracking-wider">Correo Electrónico</p>
+                                <a href="mailto:kjalilbeyruti@gmail.com" class="hover:text-brand-accent transition-colors font-medium text-lg">kjalilbeyruti@gmail.com</a>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-4 text-slate-700">
+                            <span class="text-2xl bg-white p-3 rounded-full shadow-sm border border-slate-100">📍</span> 
+                            <div>
+                                <p class="text-sm font-bold text-slate-400 uppercase tracking-wider">Ubicación</p>
+                                <p class="font-medium text-lg">Veracruz, México</p>
+                                <p class="text-sm text-slate-600">Disponible para consultoría remota y presencial</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Formulario de WhatsApp -->
+                <div class="bg-white p-8 rounded-2xl shadow-md border-t-4 border-green-500">
+                    <h5 class="font-bold text-green-800 mb-2 flex items-center gap-2 text-xl">
+                        <span>📱</span> Escríbeme por WhatsApp
+                    </h5>
+                    <p class="text-slate-600 mb-6 text-sm">
+                        Mándame un mensaje directo. Me encantaría saber qué te pareció la herramienta, qué descubriste o cómo puedo ayudarte a implementar esto en tu escuela.
+                    </p>
+                    
+                    <div class="flex flex-col gap-3">
+                        <label for="wa-message" class="text-sm font-bold text-slate-700">Tu mensaje:</label>
+                        <textarea id="wa-message" rows="4" 
+                                  class="w-full border border-slate-300 rounded-xl p-4 text-slate-700 focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none resize-none bg-slate-50 transition-colors" 
+                                  placeholder="Hola Kjalil, estuve en tu presentación y me gustaría platicar sobre..."></textarea>
+                        
+                        <button onclick="sendWhatsApp()" class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-4 px-6 rounded-xl transition-all transform hover:-translate-y-1 hover:shadow-lg flex justify-center items-center gap-2 mt-2">
+                            <span>🚀</span> Enviar a WhatsApp
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        const ecosystemData = [
+            {
+                id: 1,
+                level: "Nivel 1",
+                name: "Hacer",
+                icon: "⏱️",
+                goal: "Automatizar tareas repetitivas",
+                desc: "El punto de entrada. Se utiliza la IA como un asistente básico para acelerar la creación de contenido y comunicación.",
+                tools: [
+                    { name: "Gemini", url: "https://gemini.google.com/" },
+                    { name: "Gemini Canvas", url: "https://gemini.google.com/" },
+                    { name: "ChatGPT", url: "https://chatgpt.com/" },
+                    { name: "Claude", url: "https://claude.ai/" },
+                    { name: "Perplexity", url: "https://www.perplexity.ai/" }
+                ],
+                examples: [
+                    "Redacción rápida de correos a padres.",
+                    "Estructuración de reportes básicos de alumnos.",
+                    "Elaboración de comunicados y presentaciones rápidas."
+                ]
+            },
+            {
+                id: 2,
+                level: "Nivel 2",
+                name: "Entender",
+                icon: "🔍",
+                goal: "Analizar información para decidir mejor",
+                desc: "La IA actúa como analista. Se usa para cruzar datos y encontrar patrones que a simple vista tomarían horas descubrir.",
+                tools: [
+                    { name: "Gemini Advanced", url: "https://gemini.google.com/advanced" },
+                    { name: "ChatGPT (Data Analyst)", url: "https://chatgpt.com/" },
+                    { name: "Julius AI", url: "https://julius.ai/" },
+                    { name: "ChatPDF", url: "https://www.chatpdf.com/" }
+                ],
+                examples: [
+                    "Detectar alumnos en riesgo cruzando asistencia y calificaciones.",
+                    "Encontrar la causa raíz de problemas analizando múltiples documentos.",
+                    "Simular escenarios (¿qué pasa si no intervenimos?)."
+                ]
+            },
+            {
+                id: 3,
+                level: "Nivel 3",
+                name: "Diseñar",
+                icon: "🎯",
+                goal: "Construir sistemas que trabajen por ti",
+                desc: "Aquí dejas de apagar fuegos. Utilizas la IA para programar y estructurar sistemas automatizados sin necesidad de ser un experto en código.",
+                tools: [
+                    { name: "Google AI Studio", url: "https://aistudio.google.com/" },
+                    { name: "Zapier", url: "https://zapier.com/" },
+                    { name: "Make", url: "https://www.make.com/" },
+                    { name: "Google Apps Script", url: "https://script.google.com/" },
+                    { name: "Notion", url: "https://www.notion.so/" }
+                ],
+                examples: [
+                    "Dashboard automático de riesgo de deserción.",
+                    "Alertas automáticas por faltas enviadas a padres.",
+                    "Conectar bases de datos para automatizar flujos completos."
+                ]
+            },
+            {
+                id: 4,
+                level: "Nivel 4",
+                name: "Transformar",
+                icon: "🔄",
+                goal: "Cambiar la lógica del sistema educativo",
+                desc: "Ya no es tecnología, es pura conciencia estratégica. Rediseñas la forma en que opera la escuela enfocándote en la prevención y visibilidad.",
+                tools: [
+                    { name: "Gems (Gemini)", url: "https://gemini.google.com/" },
+                    { name: "Nano Banana", url: "https://aistudio.google.com/" },
+                    { name: "OpenAI Custom GPTs", url: "https://chatgpt.com/" },
+                    { name: "Claude Projects", url: "https://claude.ai/" },
+                    { name: "Pensamiento Sistémico", url: null } // No link, just concept
+                ],
+                examples: [
+                    "De 'Me entero cuando se va' a 'Tengo alertas semanas antes'.",
+                    "De 'Trabajo aislado' a 'Sistema centralizado en tiempo real'.",
+                    "De 'Reaccionar' a 'Diseñar prevención'."
+                ]
+            }
+        ];
+
+        const promptsData = [
+            { id: 1, catId: "vision", icon: "🧠", category: "Visión Directiva", title: "Auditoría de tareas operativas", text: "Soy directivo escolar. Siento que hago demasiadas tareas operativas que no necesariamente debería hacer yo. Hazme 3 preguntas para entender mi contexto. Después: identifica qué tareas debería eliminar, cuáles debería delegar, cuáles podría automatizar con IA, sugiéreme herramientas (ChatGPT, Claude, AI Studio, Codex u otras) y dame un plan paso a paso para empezar esta semana. Organiza tu respuesta de lo más simple a lo más avanzado." },
+            { id: 2, catId: "vision", icon: "🧠", category: "Visión Directiva", title: "Matriz Estratégica vs Operativa", text: "Analiza mi rol como directivo escolar y ayúdame a distinguir entre tareas estratégicas y operativas. Hazme 3 preguntas primero. Luego: clasifica mis tareas en: eliminar, delegar, automatizar y mantener; explícame por qué, dame ejemplos concretos aplicados a la escuela, sugiéreme herramientas y un plan de acción inmediato." },
+            { id: 3, catId: "vision", icon: "🧠", category: "Visión Directiva", title: "Diagnóstico de valor", text: "Ayúdame a identificar qué parte de mi trabajo directivo no genera valor y solo mantiene la operación. Hazme 3 preguntas primero. Después dame: un diagnóstico claro, qué debería dejar de hacer, qué debería rediseñar como sistema, y cómo hacerlo paso a paso usando IA." },
+            
+            { id: 4, catId: "reportes", icon: "⚙️", category: "Reportes y Análisis", title: "Automatización administrativa", text: "Soy directivo y quiero dejar de hacer manualmente reportes de asistencia, calificaciones y conducta. Hazme 3 preguntas para entender cómo lo hago hoy. Después: proponme una forma de automatizarlo, sugiéreme herramientas (Sheets + IA, ChatGPT, etc.), dame un flujo de trabajo claro e incluye opción básica, intermedia y avanzada." },
+            { id: 5, catId: "reportes", icon: "⚙️", category: "Reportes y Análisis", title: "Sistema de prevención", text: "Tengo datos de asistencia, calificaciones y observaciones docentes. Quiero dejar de analizarlos manualmente. Hazme 3 preguntas primero. Luego: crea un sistema para cruzar datos automáticamente, detectar alumnos en riesgo, generar diagnóstico y acciones, con pasos claros para implementarlo desde mañana." },
+            { id: 6, catId: "reportes", icon: "⚙️", category: "Reportes y Análisis", title: "Detección temprana de deserción", text: "Quiero detectar alumnos en riesgo académico o de deserción sin revisar expediente por expediente. Hazme 3 preguntas primero. Después: propón un modelo simple con IA, qué datos usar, cómo interpretarlos, y cómo automatizar el proceso." },
+            { id: 7, catId: "reportes", icon: "⚙️", category: "Reportes y Análisis", title: "Tablero de indicadores", text: "Ayúdame a convertir datos escolares dispersos en un reporte claro, accionable y automático. Hazme 3 preguntas primero. Luego: estructura el reporte ideal, define indicadores clave, sugiere herramientas y dame un paso a paso implementable." },
+            
+            { id: 8, catId: "comunicacion", icon: "💬", category: "Comunicación", title: "Sistema de mensajería", text: "Quiero dejar de redactar desde cero mensajes a padres, docentes y alumnos. Hazme 3 preguntas primero. Después: crea plantillas reutilizables, automatiza respuestas frecuentes, sugiere herramientas y dame un sistema listo para usar." },
+            { id: 9, catId: "comunicacion", icon: "💬", category: "Comunicación", title: "Estandarización del tono", text: "Ayúdame a estandarizar la comunicación institucional sin perder cercanía. Hazme 3 preguntas primero. Luego: define tono y estructura, crea ejemplos reales, propone automatización y un flujo práctico." },
+            { id: 10, catId: "comunicacion", icon: "💬", category: "Comunicación", title: "Descentralización", text: "Quiero dejar de ser el cuello de botella en la comunicación escolar. Hazme 3 preguntas primero. Después: identifica qué está mal en el flujo actual, propone un sistema distribuido, define roles y herramientas para lograrlo." },
+            
+            { id: 11, catId: "organizacion", icon: "📋", category: "Organización", title: "Gestión de acuerdos", text: "Quiero dejar de depender de mi memoria para dar seguimiento a pendientes y acuerdos. Hazme 3 preguntas primero. Luego: propón un sistema simple, herramientas (Sheets, Notion, IA, etc.), flujo semanal y pasos claros de implementación." },
+            { id: 12, catId: "organizacion", icon: "📋", category: "Organización", title: "Minutas inteligentes", text: "Quiero que mis reuniones generen acuerdos claros automáticamente. Hazme 3 preguntas primero. Después: diseña un sistema de minutas con IA, incluye responsables y fechas, herramientas recomendadas y proceso paso a paso." },
+            { id: 13, catId: "organizacion", icon: "📋", category: "Organización", title: "Tablero de control diario", text: "Ayúdame a tener una vista clara de todo lo importante sin revisar múltiples archivos o chats. Hazme 3 preguntas primero. Luego: diseña un tablero simple, qué indicadores incluir, herramientas y cómo usarlo día a día." },
+            
+            { id: 14, catId: "procesos", icon: "🔁", category: "Procesos", title: "De tarea a proceso", text: "Quiero dejar de hacer tareas repetitivas que podrían ser procesos. Hazme 3 preguntas primero. Después: identifica tareas repetitivas, conviértelas en procesos claros, documenta pasos y sugiere herramientas para automatizar." },
+            { id: 15, catId: "procesos", icon: "🔁", category: "Procesos", title: "Documentación institucional", text: "Ayúdame a documentar procesos escolares para que no dependan de personas. Hazme 3 preguntas primero. Luego: estructura procesos, crea formato estándar, sugiere herramientas y pasos de implementación." },
+            { id: 16, catId: "procesos", icon: "🔁", category: "Procesos", title: "Reingeniería de ineficiencias", text: "Identifica un proceso escolar ineficiente que normalmente no se cuestiona. Hazme 3 preguntas primero. Después: analiza el problema, rediseña el proceso, sugiere mejoras con IA y un plan claro de cambio." },
+            
+            { id: 17, catId: "delegacion", icon: "🚀", category: "Delegación", title: "Delegación con control", text: "Quiero delegar más, pero sin perder control ni calidad. Hazme 3 preguntas primero. Luego: qué delegar, a quién, cómo estructurarlo y herramientas de seguimiento." },
+            { id: 18, catId: "delegacion", icon: "🚀", category: "Delegación", title: "Liberación de tiempo", text: "Ayúdame a liberar tiempo como directivo delegando correctamente. Hazme 3 preguntas primero. Después: identifica tareas delegables, qué necesita mi equipo, cómo estructurar procesos y seguimiento." },
+            
+            { id: 19, catId: "rediseno", icon: "🤖", category: "IA y Rediseño", title: "Tres niveles de solución", text: "Quiero rediseñar una tarea operativa para dejar de hacerla yo. Hazme 3 preguntas primero. Después: dime si eliminar, delegar o automatizar, sugiere herramientas y dame 3 niveles de solución (básico, intermedio, avanzado)." },
+            { id: 20, catId: "rediseno", icon: "🔥", category: "IA y Rediseño", title: "El Prompt Más Poderoso", text: "Soy directivo escolar. Esta es la tarea que me está quitando tiempo: [ESCRÍBELA AQUÍ]. Hazme 3 preguntas para entender mi contexto. Después: dime si debo eliminarla, delegarla o automatizarla, diseña un sistema para resolverla sin depender de mí, sugiéreme herramientas (ChatGPT, Claude, AI Studio, Codex u otras), dame un paso a paso claro para implementarlo desde mañana y organiza la respuesta por niveles: rápido, estructurado y automatizado." }
+        ];
+
+        const categories = [
+            { id: 'all', name: 'Todas las áreas', icon: '📁' },
+            { id: 'vision', name: 'Visión Directiva', icon: '🧠' },
+            { id: 'reportes', name: 'Reportes y Análisis', icon: '⚙️' },
+            { id: 'comunicacion', name: 'Comunicación', icon: '💬' },
+            { id: 'organizacion', name: 'Organización', icon: '📋' },
+            { id: 'procesos', name: 'Procesos y Sistemas', icon: '🔁' },
+            { id: 'delegacion', name: 'Delegación Efectiva', icon: '🚀' },
+            { id: 'rediseno', name: 'IA y Rediseño', icon: '🤖' }
+        ];
+
+        let state = {
+            activeLevel: 1,
+            activeCategory: 'all'
+        };
+
+        let myChart; // Variable global para la gráfica
+
+        function initChart() {
+            const ctx = document.getElementById('ecosystemChart').getContext('2d');
+            
+            const dataOperativa = [85, 55, 25, 5];
+            const dataEstrategica = [15, 45, 75, 95];
+            const labels = ecosystemData.map(d => `${d.level}: ${d.name}`);
+
+            myChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Carga Operativa',
+                            data: dataOperativa,
+                            backgroundColor: '#94a3b8',
+                            borderRadius: 4
+                        },
+                        {
+                            label: 'Impacto Estratégico',
+                            data: dataEstrategica,
+                            backgroundColor: '#2563eb',
+                            borderRadius: 4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: { stacked: true, grid: { display: false } },
+                        y: { stacked: true, display: false, max: 100 }
+                    },
+                    plugins: {
+                        legend: { position: 'bottom' },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.dataset.label + ': ' + context.raw + '%';
+                                }
+                            }
+                        }
+                    },
+                    onClick: (e, activeEls) => {
+                        if (activeEls.length > 0) {
+                            const index = activeEls[0].index;
+                            renderLevelDetails(index + 1);
+                        }
+                    }
+                }
+            });
+            updateChartHighlight();
+        }
+
+        // Función para animar/resaltar la gráfica según el nivel activo
+        function updateChartHighlight() {
+            if (!myChart) return;
+            
+            const activeIndex = state.activeLevel - 1;
+            
+            // Colores más tenues para los inactivos, colores fuertes para el activo
+            const bgOperativa = ecosystemData.map((_, i) => i === activeIndex ? '#475569' : '#cbd5e1'); // Slate-600 vs Slate-300
+            const bgEstrategica = ecosystemData.map((_, i) => i === activeIndex ? '#1d4ed8' : '#93c5fd'); // Blue-700 vs Blue-300
+
+            myChart.data.datasets[0].backgroundColor = bgOperativa;
+            myChart.data.datasets[1].backgroundColor = bgEstrategica;
+            myChart.update();
+        }
+
+        function renderLevelButtons() {
+            const container = document.getElementById('level-buttons');
+            container.innerHTML = ecosystemData.map(level => `
+                <button onclick="renderLevelDetails(${level.id})" 
+                        class="px-4 py-2 rounded-lg text-sm font-semibold transition-all border ${state.activeLevel === level.id ? 'bg-brand-accent text-white border-brand-accent shadow-md scale-105' : 'bg-white text-slate-600 border-slate-300 hover:bg-slate-50'}">
+                    ${level.icon} ${level.level}
+                </button>
+            `).join('');
+        }
+
+        function renderLevelDetails(levelId) {
+            state.activeLevel = levelId;
+            renderLevelButtons();
+            updateChartHighlight(); // Actualizar la gráfica visualmente
+            
+            const level = ecosystemData.find(l => l.id === levelId);
+            const container = document.getElementById('level-details');
+            
+            // Renderización de Herramientas con enlaces
+            let toolsHtml = level.tools.map(t => {
+                if(t.url) {
+                    return `<a href="${t.url}" target="_blank" title="Abrir ${t.name}" class="inline-block bg-white hover:bg-brand-50 hover:text-brand-accent hover:border-brand-accent text-brand-800 text-xs font-semibold px-3 py-1.5 rounded-full border border-slate-200 transition-colors shadow-sm cursor-pointer">${t.name} <span class="text-[10px] opacity-60">↗</span></a>`;
+                } else {
+                    return `<span class="inline-block bg-slate-100 text-slate-600 text-xs font-semibold px-3 py-1.5 rounded-full border border-slate-200">${t.name}</span>`;
+                }
+            }).join('');
+            
+            let examplesHtml = level.examples.map(e => `<li class="flex items-start gap-2 mb-2"><span class="text-green-500 font-bold">✓</span> <span class="text-slate-700">${e}</span></li>`).join('');
+
+            // Animación sencilla de opacidad al cambiar
+            container.style.opacity = '0';
+            setTimeout(() => {
+                container.innerHTML = `
+                    <div class="flex items-center gap-3 mb-4">
+                        <span class="text-4xl">${level.icon}</span>
+                        <div>
+                            <h4 class="text-xs text-brand-accent uppercase font-bold tracking-wider">${level.level}</h4>
+                            <h3 class="text-2xl font-bold text-brand-900">${level.name}</h3>
+                        </div>
+                    </div>
+                    <div class="bg-blue-50 border border-blue-100 rounded-lg p-4 mb-6">
+                        <p class="font-bold text-brand-900 mb-1">🎯 Objetivo Principal:</p>
+                        <p class="text-brand-800">${level.goal}</p>
+                    </div>
+                    <p class="text-slate-600 mb-6 leading-relaxed">${level.desc}</p>
+                    
+                    <div class="mb-6">
+                        <p class="font-bold text-slate-800 mb-3 border-b border-slate-200 pb-1">Herramientas Recomendadas</p>
+                        <div class="flex flex-wrap gap-2">${toolsHtml}</div>
+                        <p class="text-[11px] text-slate-400 mt-2 italic">*Haz clic en la herramienta para ir a su sitio web.</p>
+                    </div>
+                    
+                    <div>
+                        <p class="font-bold text-slate-800 mb-3 border-b border-slate-200 pb-1">Ejemplos de Aplicación</p>
+                        <ul class="text-sm">${examplesHtml}</ul>
+                    </div>
+                `;
+                container.style.opacity = '1';
+            }, 150);
+        }
+
+        function renderCategories() {
+            const container = document.getElementById('category-filters');
+            container.innerHTML = categories.map(cat => `
+                <button onclick="filterPrompts('${cat.id}')" 
+                        id="btn-cat-${cat.id}"
+                        class="category-btn flex items-center gap-3 w-full text-left px-4 py-3 rounded-lg border border-transparent text-slate-600 hover:bg-slate-50 transition-colors font-medium">
+                    <span class="text-xl">${cat.icon}</span> ${cat.name}
+                </button>
+            `).join('');
+            updateActiveCategoryUI();
+        }
+
+        function filterPrompts(categoryId) {
+            state.activeCategory = categoryId;
+            updateActiveCategoryUI();
+            
+            const filtered = categoryId === 'all' 
+                ? promptsData 
+                : promptsData.filter(p => p.catId === categoryId);
+            
+            const currentCat = categories.find(c => c.id === categoryId);
+            document.getElementById('current-category-title').innerText = `${currentCat.icon} ${currentCat.name}`;
+            document.getElementById('prompt-count').innerText = `${filtered.length} Prompts`;
+            
+            renderPrompts(filtered);
+        }
+
+        function updateActiveCategoryUI() {
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                btn.classList.remove('active', 'shadow-md');
+            });
+            const activeBtn = document.getElementById(`btn-cat-${state.activeCategory}`);
+            if(activeBtn) {
+                activeBtn.classList.add('active', 'shadow-md');
+            }
+        }
+
+        function copyPrompt(promptId, btnElement) {
+            const prompt = promptsData.find(p => p.id === promptId);
+            if (!prompt) return;
+
+            const textToCopy = prompt.text;
+            
+            const textarea = document.createElement('textarea');
+            textarea.value = textToCopy;
+            textarea.style.position = 'fixed'; 
+            textarea.style.opacity = '0';
+            document.body.appendChild(textarea);
+            textarea.select();
+            
+            try {
+                document.execCommand('copy');
+                
+                const originalText = btnElement.innerHTML;
+                btnElement.innerHTML = `<span class="text-green-600 font-bold">✓ ¡Copiado!</span>`;
+                btnElement.classList.replace('border-slate-300', 'border-green-400');
+                btnElement.classList.replace('bg-white', 'bg-green-50');
+                
+                setTimeout(() => {
+                    btnElement.innerHTML = originalText;
+                    btnElement.classList.replace('border-green-400', 'border-slate-300');
+                    btnElement.classList.replace('bg-green-50', 'bg-white');
+                }, 2000);
+            } catch (err) {
+                console.error('Failed to copy', err);
+                alert("No se pudo copiar el texto. Selecciona manualmente.");
+            } finally {
+                document.body.removeChild(textarea);
+            }
+        }
+
+        function renderPrompts(prompts) {
+            const container = document.getElementById('prompts-grid');
+            container.innerHTML = prompts.map(p => `
+                <div class="bg-white rounded-xl shadow-sm border ${p.id === 20 ? 'border-amber-400 shadow-amber-100' : 'border-slate-200'} p-6 flex flex-col h-full hover:shadow-md transition-shadow">
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <span class="text-xs font-bold text-brand-accent uppercase tracking-wider mb-1 block">${p.icon} ${p.category}</span>
+                            <h5 class="font-bold text-lg text-brand-900 leading-tight">${p.title}</h5>
+                        </div>
+                        <span class="text-slate-300 font-mono text-xs">#${p.id}</span>
+                    </div>
+                    <div class="bg-slate-50 border border-slate-100 rounded-lg p-4 flex-grow mb-4 relative group">
+                        <p class="text-slate-700 text-sm leading-relaxed">${p.text}</p>
+                    </div>
+                    <button onclick="copyPrompt(${p.id}, this)" class="w-full bg-white border border-slate-300 hover:border-brand-accent hover:text-brand-accent text-slate-700 font-semibold py-3 px-4 rounded-lg transition-colors flex justify-center items-center gap-2">
+                        <span>📋</span> Copiar Prompt
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        // Función para enviar WhatsApp
+        function sendWhatsApp() {
+            const messageInput = document.getElementById('wa-message').value;
+            let finalMessage = messageInput.trim();
+            
+            // Si el usuario no escribe nada, ponemos un mensaje por defecto
+            if (finalMessage === "") {
+                finalMessage = "Hola Kjalil, estuve viendo la Guía Interactiva para Directivos y me gustaría conversar sobre...";
+            }
+            
+            const encodedMessage = encodeURIComponent(finalMessage);
+            const phoneNumber = "522292646327";
+            const waUrl = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+            
+            window.open(waUrl, '_blank');
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initChart();
+            renderLevelDetails(1);
+            renderCategories();
+            filterPrompts('all');
+        });
+
+    </script>
+</body>
+</html>
